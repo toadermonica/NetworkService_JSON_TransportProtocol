@@ -1,9 +1,9 @@
 using NUnit.Framework;
-using Server;
+using Client;
 
-namespace Tests
+namespace NetworkServiceTests
 {
-    public class UnitTestServer
+    public class UnitTestClient
     {
         [SetUp]
         public void Setup()
