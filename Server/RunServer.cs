@@ -1,4 +1,7 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using System;
+using System.IO;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
@@ -37,32 +40,31 @@ namespace Server
             try
             {
                 TcpClient clientInstance = (TcpClient)incomingObj;
+                NetworkStream stream = clientInstance.GetStream();
 
-                var stream = clientInstance.GetStream();
-
-                var buffer = new byte[clientInstance.ReceiveBufferSize];
-
-                var rcnt = stream.Read(buffer, 0, buffer.Length);
-
-                var msg = Encoding.UTF8.GetString(buffer, 0, rcnt);
-
-                Console.WriteLine($"Message: {msg}");
-
-                msg = msg.ToUpper();
-
-                buffer = Encoding.UTF8.GetBytes(msg);
-
-                stream.Write(buffer, 0, buffer.Length);
-
-                stream.Close();
+                if (stream.CanRead)
+                {
+                    ServerController serverController = new ServerController(clientInstance, stream);
+                    var response = serverController.ClientRequest();
+                    string error; 
+                    if(serverController.isValidRequest(response, out error))
+                    {
+                        serverController.ServerResponse(response);
+                    }
+                    else
+                    {
+                        serverController.ServerResponse(error);
+                    }
+                    
+                }
             }
-            catch (Exception error)
+            catch (IOException error)
             {
                 Console.WriteLine("Exception thrown: ", error);
             }
-          
-        }
 
+        }
     }
 
+      
 }
