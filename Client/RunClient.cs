@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Net;
+using System.Net.Sockets;
+using System.Text;
 using System.Threading;
 
 namespace Client
@@ -7,20 +10,35 @@ namespace Client
     {
         static void Main(string[] args)
         {
-            Client client = new Client();
-            string ipAddress = "127.0.0.1";
 
-            new Thread(() =>
+            while (true)
             {
-                Thread.CurrentThread.IsBackground = true;
-                client.Connect(ipAddress, "Hello I'm Device 1...");
-            }).Start();
-            new Thread(() =>
-            {
-                Thread.CurrentThread.IsBackground = true;
-                client.Connect(ipAddress, "Hello I'm Device 2...");
-            }).Start();
-            Console.ReadLine();
+
+
+                var client = new TcpClient();
+                client.Connect(IPAddress.Loopback, 5000);
+
+                var stream = client.GetStream();
+
+                Console.WriteLine("Send message:");
+                var msg = Console.ReadLine();
+
+                Console.WriteLine($"Message: {msg}");
+                var buffer = Encoding.UTF8.GetBytes(msg);
+
+                stream.Write(buffer, 0, buffer.Length);
+
+                if (msg == "exit") break;
+
+                buffer = new byte[client.ReceiveBufferSize];
+                var rcnt = stream.Read(buffer, 0, buffer.Length);
+
+                msg = Encoding.UTF8.GetString(buffer, 0, rcnt);
+
+                Console.WriteLine($"Message: {msg}");
+
+                stream.Close();
+            }
         }
     }
 }
