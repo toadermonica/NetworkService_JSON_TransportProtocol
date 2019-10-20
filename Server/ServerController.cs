@@ -35,6 +35,9 @@ namespace Server
         public bool isValidRequest(string receivedMessage, out string error)
         {
             Request request;
+            Category requestBody;
+
+            //check if request from client is of type JSON object
             try
             {
                  request = JsonConvert.DeserializeObject<Request>(receivedMessage);
@@ -45,7 +48,7 @@ namespace Server
                 return false;
             }
 
-
+            //check if method provided is valid
             if(request.method == null)
             {
                 error = "missing method";
@@ -57,7 +60,60 @@ namespace Server
                 error = "illegal method";
                 return false;
             }
+            //check if date provided is valid
+            var requestDate = request.date;
+            if(string.IsNullOrEmpty(requestDate.ToString()))
+            {
+                error = "missing date";
+                return false;
+            }
+            var isLong = requestDate.GetType().Equals(typeof(long));
+            if (!isLong)
+            {
+                error = "illegal date";
+                return false;
+            }
+            
+            //check if resource is valid
+            var requestResource = request.path;
+            if (string.IsNullOrEmpty(requestResource))
+            {
+                error = "missing resource";
+                return false;
+            }
 
+            //check if body provided is valid
+            if (string.IsNullOrEmpty(request.body))
+            {
+                error = "missing body";
+                return false;
+            }
+
+            try
+            {
+                //try and deserialize the string to json object and if it is not json then catch error
+                requestBody = JsonConvert.DeserializeObject<Category>(request.body);
+            }catch(Exception ex)
+            {
+                Console.WriteLine(ex);
+                error = "illegal body";
+                return false;
+            }
+            var bodyCid = requestBody.cid;
+            var bodyName = requestBody.name;
+
+            if (string.IsNullOrEmpty(bodyCid.ToString()))
+            {
+                error = "missing cid";
+                return false;
+            }
+            if (string.IsNullOrEmpty(bodyName))
+            {
+                error = "missing bodyName";
+                return false;
+            }
+
+            //if all is fine then return true and error will be empty
             error = string.Empty;
             return true;
 
