@@ -4,9 +4,19 @@ using System.Text;
 
 namespace Server
 {
-    class Response
+    public class Response
     {
-        public string status { get; set; }
+        public int status { get; set; }
         public string body { get; set; }
+
+        public Response()
+        {
+
+        }
+        public Response(int status, string body)
+        {
+            this.status = status;
+            this.body = body;
+        }
     }
 }

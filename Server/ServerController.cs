@@ -1,13 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Text;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using System.IO;
-using System.Net;
 using System.Net.Sockets;
-using System.Threading;
-
+using Server.Helpers;
+using Newtonsoft.Json;
 
 namespace Server
 {
@@ -30,103 +25,27 @@ namespace Server
             return receivedMessage;
         }
 
-        //Will take care of deserialization of json request 
-        //and parse to object of type request and category depending on the case
-        public bool isValidRequest(string receivedMessage, out string error)
+        public string SetResponse(string receivedMessage)
         {
-            Request request;
-            Category requestBody;
-
-            //check if request from client is of type JSON object
-            try
+            Response serverResponse = new Response();
+            Validation validator = new Validation(receivedMessage);
+            string error;
+            if (validator.isValidRequest(out error))
             {
-                 request = JsonConvert.DeserializeObject<Request>(receivedMessage);
-            }catch(Exception ex)
-            {
-                Console.WriteLine(ex);
-                error = "invlaid JSON";
-                return false;
+                serverResponse = new Response(2, "OK");
             }
-
-            //check if method provided is valid
-            if(request.method == null)
-            {
-                error = "missing method";
-                return false;
-            }
-
-            if (!request.method.Equals("create") && !request.method.Equals("read") && !request.method.Equals("update") && !request.method.Equals("delete") && !request.method.Equals("echo"))
-            {
-                error = "illegal method";
-                return false;
-            }
-            //check if date provided is valid
-            var requestDate = request.date;
-            if(string.IsNullOrEmpty(requestDate.ToString()))
-            {
-                error = "missing date";
-                return false;
-            }
-            var isLong = requestDate.GetType().Equals(typeof(long));
-            if (!isLong)
-            {
-                error = "illegal date";
-                return false;
-            }
-            
-            //check if resource is valid
-            var requestResource = request.path;
-            if (string.IsNullOrEmpty(requestResource))
-            {
-                error = "missing resource";
-                return false;
-            }
-
-            //check if body provided is valid
-            if (string.IsNullOrEmpty(request.body))
-            {
-                error = "missing body";
-                return false;
-            }
-
-            try
-            {
-                //try and deserialize the string to json object and if it is not json then catch error
-                requestBody = JsonConvert.DeserializeObject<Category>(request.body);
-            }catch(Exception ex)
-            {
-                Console.WriteLine(ex);
-                error = "illegal body";
-                return false;
-            }
-            var bodyCid = requestBody.cid;
-            var bodyName = requestBody.name;
-
-            if (string.IsNullOrEmpty(bodyCid.ToString()))
-            {
-                error = "missing cid";
-                return false;
-            }
-            if (string.IsNullOrEmpty(bodyName))
-            {
-                error = "missing bodyName";
-                return false;
-            }
-
-            //if all is fine then return true and error will be empty
-            error = string.Empty;
-            return true;
-
+            string jsonServerResponse = JsonConvert.SerializeObject(serverResponse);
+            return jsonServerResponse;
         }
 
-
-        public  void ServerResponse(string response)
+        public void ServerResponse(string response)
         {
             //this is gonna be answer from server to client
             if (string.IsNullOrEmpty(response))
             {
                 response = "This needs to do some status return instead!!!";
             }
+            //convert response to json
             response = response.ToUpper(); //- need a server message/response to be set here
             // make the message into bytes again and encode
             byte[] msg = Encoding.ASCII.GetBytes(response);
@@ -138,7 +57,10 @@ namespace Server
             //close stream with client
             stream.Close();
         }
+
+
         
+
     }
 }
 

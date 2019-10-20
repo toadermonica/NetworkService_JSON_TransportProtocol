@@ -46,16 +46,8 @@ namespace Server
                 {
                     ServerController serverController = new ServerController(clientInstance, stream);
                     var response = serverController.ClientRequest();
-                    string error; 
-                    if(serverController.isValidRequest(response, out error))
-                    {
-                        serverController.ServerResponse(response);
-                    }
-                    else
-                    {
-                        serverController.ServerResponse(error);
-                    }
-                    
+                    serverController.ServerResponse(response);
+                   
                 }
             }
             catch (IOException error)
