@@ -635,7 +635,8 @@ namespace Tests
 
                 var responseData = Encoding.UTF8.GetString(memStream.ToArray());
                 Console.WriteLine(responseData);
-                return JsonSerializer.Deserialize<Response>(responseData, new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
+                var response = JsonSerializer.Deserialize<Response>(responseData, new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
+                return response;
             }
         }
     }

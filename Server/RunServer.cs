@@ -22,10 +22,9 @@ namespace Server
             var server = new TcpListener(IPAddress.Parse(ipAddress), portNumber);
             server.Start();
             Console.WriteLine("Server is up and running!");
-
             while (true)
             {
-                TcpClient client = server.AcceptTcpClient();
+                var client = server.AcceptTcpClient();
                 // Start a thread that calls a parameterized static method.
                 Thread clientThread = new Thread(ClientInstance);
                 clientThread.Start(client);
@@ -42,13 +41,11 @@ namespace Server
                 TcpClient clientInstance = (TcpClient)incomingObj;
                 NetworkStream stream = clientInstance.GetStream();
 
-                if (stream.CanRead)
-                {
+                
                     ServerController serverController = new ServerController(clientInstance, stream);
                     var response = serverController.ClientRequest();
                     serverController.ServerResponse(response);
-                   
-                }
+               
             }
             catch (IOException error)
             {

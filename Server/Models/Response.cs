@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -6,17 +7,28 @@ namespace Server
 {
     public class Response
     {
-        public int status { get; set; }
         public string body { get; set; }
+        public Status status { get; set; }
 
-        public Response()
+        public class Status
         {
+            public int code { get; set; } 
+            public string statusBody { get; set; }
+            
+            public string SetStatusBody(int code)
+            {
+                return code switch
+                {
+                    1 => "OK",
+                    2 => "CREATED",
+                    3 => "UPDATED",
+                    4 => "BAD REQUEST",
+                    5 => "NOT FOUND",
+                    6 => "ERROR",
+                    _ => "UNKNOWN STATUS CODE",
+                };
+            }
 
-        }
-        public Response(int status, string body)
-        {
-            this.status = status;
-            this.body = body;
         }
     }
 }

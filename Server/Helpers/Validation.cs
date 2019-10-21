@@ -8,6 +8,8 @@ namespace Server.Helpers
     class Validation
     {
         public string requestMessage { get; set; }
+
+        public Validation(){}
         public Validation(string requestMessage)
         {
             this.requestMessage = requestMessage;
@@ -15,11 +17,10 @@ namespace Server.Helpers
 
         //Will take care of deserialization of json request 
         //and parse to object of type request and category depending on the case
-        public bool isValidRequest(out string error)
+        public bool isValidRequest(out Request request, out string error)
         {
-            Request request;
+            request = new Request();
             error = string.Empty;
-
             //check if request from client is of type JSON object
             try
             {
@@ -32,13 +33,24 @@ namespace Server.Helpers
                 return false;
             }
 
-            error += isValidMethod(request.method) + isValidResource(request.path) + isValidDate(request.date) + isValidBody(request.body);
+            error += isValidMethod(request.Method) + isValidResource(request.Path) + isValidDate(request.Date) /*+ isValidBody(request.Body)*/;
 
             //if all is fine then return true and error will be empty
             return true;
         }
 
-        private string isValidMethod(string method)
+        public bool isInvalid(Request request, out string error)
+        {
+            error = string.Empty;
+            error += isValidMethod(request.Method) + isValidResource(request.Path) + isValidDate(request.Date) /*+ isValidBody(request.Body)*/;
+            if (!string.IsNullOrEmpty(error))
+            {
+                return true;
+            }
+            return false;
+        }
+
+        public string isValidMethod(string method)
         {
             string error = string.Empty;
             //check if method provided is valid
@@ -53,9 +65,10 @@ namespace Server.Helpers
                 error = "illegal method";
                 return error;
             }
+           
             return error;
         }
-        private string isValidDate(long date)
+        public string isValidDate(long date)
         {
             string error = string.Empty;
             //check if date provided is valid
@@ -73,7 +86,7 @@ namespace Server.Helpers
             }
             return error;
         }
-        private string isValidResource(string path)
+        public string isValidResource(string path)
         {
             string error = string.Empty;
             //check if resource is valid
@@ -85,7 +98,7 @@ namespace Server.Helpers
             }
             return error;
         }
-        private string isValidBody(string body)
+       /* public string isValidBody(string body)
         {
             Category requestBody;
 
@@ -111,8 +124,8 @@ namespace Server.Helpers
 
             return error;
 
-           /* var bodyCid = requestBody.cid;
-            var bodyName = requestBody.name;
+            var bodyCid = requestBody.Id;
+            var bodyName = requestBody.Name;
             if (string.IsNullOrEmpty(bodyCid.ToString()))
             {
                 error = "missing cid";
@@ -122,8 +135,8 @@ namespace Server.Helpers
             {
                 error = "missing bodyName";
                 return error;
-            }*/
-        }
+            }
+        }*/
 
 
     }
