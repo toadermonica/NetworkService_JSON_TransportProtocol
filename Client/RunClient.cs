@@ -1,12 +1,11 @@
-﻿using NUnit.Framework;
-using Server;
+﻿using Server;
 using System;
 using System.IO;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Text.Json;
-using System.Threading;
+using Tests;
 
 namespace Client
 {
@@ -41,7 +40,7 @@ namespace Client
             }
         }
 
-        public static Response ReadResponse(this TcpClient client)
+       /* public static Response ReadResponse(this TcpClient client)
         {
             var strm = client.GetStream();
             //strm.ReadTimeout = 250;
@@ -61,7 +60,7 @@ namespace Client
                 var response = JsonSerializer.Deserialize<Response>(responseData, new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
                 return response;
             }
-        }
+        }*/
 
         /*public static void Constraint_ConnectionWithoutRequest_ShouldConnect()
         {

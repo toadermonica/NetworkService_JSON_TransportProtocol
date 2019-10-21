@@ -22,34 +22,42 @@ namespace Server
             var server = new TcpListener(IPAddress.Parse(ipAddress), portNumber);
             server.Start();
             Console.WriteLine("Server is up and running!");
-            while (true)
+            try
             {
-                var client = server.AcceptTcpClient();
-                // Start a thread that calls a parameterized static method.
-                Thread clientThread = new Thread(ClientInstance);
-                clientThread.Start(client);
+                while (true)
+                {
+                    TcpClient client = server.AcceptTcpClient();
+
+                    var thread = new Thread(
+                    () => ClientInstance(client)
+                    );
+
+                    thread.Start();
+                }
             }
+            catch(Exception e)
+            {
+                Console.WriteLine("Exception thrown: {0}", e);
+                server.Stop();
+            }
+           
 
             //server.Stop(); - this method is never hit due to the while loop - find a way to close server by input string in cmd - while msg ! exit then keep server alive - not mandatory
         }
 
         //Method needs to work like this due to it being called in the thread. The thread parses the TcpClient client object with .Start()
-        public static void ClientInstance(object incomingObj)
+        public static void ClientInstance(TcpClient incomingObj)
         {
             try
             {
                 TcpClient clientInstance = (TcpClient)incomingObj;
-                NetworkStream stream = clientInstance.GetStream();
-
-                
-                    ServerController serverController = new ServerController(clientInstance, stream);
-                    var response = serverController.ClientRequest();
-                    serverController.ServerResponse(response);
-               
+                ServerController serverController = new ServerController();
+                serverController.HandleOpperation(clientInstance);
             }
-            catch (IOException error)
+            catch (Exception error)
             {
-                Console.WriteLine("Exception thrown: ", error);
+                var er = error;
+                Console.WriteLine("Exception thrown: {0}", er);
             }
 
         }

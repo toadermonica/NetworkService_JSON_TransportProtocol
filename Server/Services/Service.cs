@@ -34,7 +34,7 @@ namespace Server.Services
             }
         }*/
 
-        public Response ExecuteMethod(Request requestMessage)
+        /*public Response ExecuteMethod(Request requestMessage)
         {
             Validation validator = new Validation();
             string method = requestMessage.Method;
@@ -60,7 +60,7 @@ namespace Server.Services
                 return ErrorResponse(error);
             }
             return Echo();
-        }
+        }*/
 
         public void Create(string path)
         {
@@ -89,13 +89,13 @@ namespace Server.Services
 
         /*This method does not take any path, it is just ignored if provided, and will simply return the
             body of the request as the body of the response with status “1 Ok”. */
-        public Response Echo()
+        public Response Echo(string body)
         {
             Status status = new Status();
             status.code = 1;
             status.statusBody = status.SetStatusBody(1);
             Response response = new Response();
-            if (string.IsNullOrEmpty(requestMessage.Body))
+            if (string.IsNullOrEmpty(body))
             {
                 response.status = status;
                 response.body = string.Empty;
@@ -103,7 +103,7 @@ namespace Server.Services
             else
             {
                 response.status = status;
-                response.body = requestMessage.Body;
+                response.body = body;
             }
             return response;
         }
