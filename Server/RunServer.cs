@@ -27,12 +27,11 @@ namespace Server
                 while (true)
                 {
                     TcpClient client = server.AcceptTcpClient();
+                    Console.WriteLine("client connected");
 
-                    var thread = new Thread(
-                    () => ClientInstance(client)
-                    );
+                    var thread = new Thread(ClientInstance);
 
-                    thread.Start();
+                    thread.Start(client);
                 }
             }
             catch(Exception e)
@@ -46,8 +45,9 @@ namespace Server
         }
 
         //Method needs to work like this due to it being called in the thread. The thread parses the TcpClient client object with .Start()
-        public static void ClientInstance(TcpClient incomingObj)
+        public static void ClientInstance(object incomingObj)
         {
+            Console.WriteLine("in client instance");
             try
             {
                 TcpClient clientInstance = (TcpClient)incomingObj;

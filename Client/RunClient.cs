@@ -15,7 +15,12 @@ namespace Client
         private const int Port = 5000; 
         static void Main(string[] args)
         {
-
+            var request = new
+            {
+                Method = "echo",
+                Date = "123445566456456",
+                Body = "Hello World"
+            };
 
 
             while (true)
@@ -26,14 +31,19 @@ namespace Client
                 client.Connect(IPAddress.Loopback, Port);
 
                 var stream = client.GetStream();
-                Console.WriteLine("Send message:");
-                var msg = Console.ReadLine();
-                var buffer = Encoding.UTF8.GetBytes(msg);
+               // Console.WriteLine("Send message:");
+                //var msg = Console.ReadLine();
+                
+                var req = JsonSerializer.Serialize(request, new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
+                var buffer = Encoding.UTF8.GetBytes(req);
                 stream.Write(buffer, 0, buffer.Length);
 
-                if (msg == "exit") break;
+                //if (msg == "exit") break;
 
-                var response = client.ReadResponse();
+                int rcnt = stream.Read(buffer, 0, buffer.Length);
+                var response = Encoding.UTF8.GetString(buffer, 0, rcnt);
+                Console.WriteLine("Client ", response);
+                //var response = client.ReadResponse();
                 Console.WriteLine($"Response from server is: {response}");
                 stream.Close();
                
