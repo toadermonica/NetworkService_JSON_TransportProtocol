@@ -1,20 +1,23 @@
 ﻿using System;
 using System.Text.Json;
+using System.Text.RegularExpressions;
 
 namespace Server
 {
     public static class Validation
     {
 
-        public static bool isValidClientRequest(Request obj, out string error)
+        public static bool isValidClientRequest(Request obj, out string error, out string specialBody)
         {
             error = string.Empty;
+            specialBody = null;
             var finalError = string.Empty;
             // the ? : conditional operator "if isValidMethod then return string.empty else return the out parameter of the function"
             finalError += Validation.isValidMethodName(obj, out string methodError) ? string.Empty : methodError;
             finalError += Validation.isValidPath(obj, out string pathError) ? string.Empty : pathError;
             finalError += Validation.isValidDate(obj, out string dateError) ? string.Empty : dateError;
             finalError += Validation.hasBody(obj, out string bodyError) ? string.Empty : bodyError;
+            specialBody += Validation.isSpecialEcho(obj, out string specialReturn) ? specialReturn : null;
             if (string.IsNullOrEmpty(finalError))
             {
                 //request parsed through this mother function is valid (so far)
@@ -45,12 +48,15 @@ namespace Server
         }
         public static bool isValidPath(Request obj, out string error)
         {
+            var path = obj.Path;
             error = string.Empty;
-            if (string.IsNullOrEmpty(obj.Path))
+            if (string.IsNullOrEmpty(path))
             {
                 error = " missing resource ";
                 return false;
             }
+            /*if(path.Contains("/api/") && )*/
+            
             return true;
         }
         public static bool isValidDate(Request obj, out string error)
@@ -75,33 +81,64 @@ namespace Server
         public static bool hasBody(Request obj, out string bodyError)
         {
             var method = obj.Method;
-            var error = string.Empty;
             var body = obj.Body;
-            if(!method.Equals("delete") && !method.Equals("read") && isValidMethodName(obj, out error))
+
+            if (string.IsNullOrEmpty(method))
             {
-                if (string.IsNullOrEmpty(body))
-                {
-                    bodyError = " missing body ";
-                    return false;
-                }
+                bodyError = string.Empty;
+                return true;
             }
-            if (method.Equals("update"))
+            if(!method.Equals("delete") && !method.Equals("read"))
             {
-                try
+                if(method.Equals("create") || method.Equals("echo") || method.Equals("update"))
                 {
-                    Console.WriteLine("In has body try ");
-                    var canDeserialize = JsonSerializer.Deserialize<Category>(obj.Body, new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
-                    Console.WriteLine(canDeserialize);
+                    if (string.IsNullOrEmpty(body))
+                    {
+                        bodyError = " missing body ";
+                        return false;
+                    }
                 }
-                catch(Exception e){
-                    Console.WriteLine("In the exception");
-                    bodyError = " illegal body ";
-                    return false;
+
+
+                if (method.Equals("update"))
+                {
+                    try
+                    {
+                        Console.WriteLine("In has body try ");
+                        var canDeserialize = JsonSerializer.Deserialize<Category>(obj.Body, new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
+                        Console.WriteLine(canDeserialize);
+                    }
+                    catch (Exception e)
+                    {
+                        Console.WriteLine("In the exception");
+                        bodyError = " illegal body ";
+                        return false;
+                    }
                 }
+
             }
+            
             bodyError = string.Empty;
             return true;
         }
 
+        public static bool isSpecialEcho(Request obj, out string specialReturn)
+        {
+
+            if (string.IsNullOrEmpty(obj.Method))
+            {
+                specialReturn = null;
+                return false;
+            }
+            if (obj.Method.Equals("echo") && !string.IsNullOrEmpty(obj.Body))
+            {
+                specialReturn = obj.Body;
+                return true;
+            }
+            specialReturn = null;
+            return false;
+        }
+
+        
     }
 }

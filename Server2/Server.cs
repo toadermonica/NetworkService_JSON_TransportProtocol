@@ -52,10 +52,16 @@ namespace Server
                 Console.WriteLine("Illegal json body? ", request);
 
                 //pass request to mother validation function from validation class
-                if (!Validation.isValidClientRequest(request, out string error))
+                if (!Validation.isValidClientRequest(request, out string error, out string echoCaseBody))
                 {
                     response.Status = error;
+                    if (!string.IsNullOrEmpty(echoCaseBody))
+                    {
+                        response.Body = echoCaseBody;
+                    }
                 }
+
+                
 
                 Console.WriteLine("In hereee!!! main: {0}",request.ToString());
                 Console.WriteLine("Response Status to be sent: {0}", response.Status);
