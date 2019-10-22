@@ -111,12 +111,25 @@ namespace Server
             try
             {
                 var request = client.ReadRequest();
-                if (!Validation.isValidMethodName(request, out string error))
+                if (!Validation.isValidMethodName(request, out string methodError))
                 {
-                    response.Status = error;
+                    response.Status = methodError;
+                }
+                if(!Validation.isValidPath(request, out string pathError))
+                {
+                    response.Status = pathError;
+                }
+                if(!Validation.isValidDate(request, out string dateError))
+                {
+                    response.Status = dateError;
+                }
+                if(!Validation.hasBody(request, out string bodyError))
+                {
+                    Console.WriteLine("HasBody is now : ", bodyError);
+                    response.Status = bodyError;
                 }
 
-                Console.WriteLine(request.ToString());
+                Console.WriteLine("In hereee!!! main: ",request.ToString());
                 Console.WriteLine("Response Status: ", response.Status);
                 Console.WriteLine("Response Body: ", response.Status);
 
@@ -153,6 +166,58 @@ namespace Server
             }
             return true;
         }
+        public static bool isValidPath(Request obj, out string error)
+        {
+            error = string.Empty;
+            if (string.IsNullOrEmpty(obj.Path))
+            {
+                error = "missing resource";
+                return false;
+            }
+            return true;
+        }
+        public static bool isValidDate(Request obj, out string error)
+        {
+            error = string.Empty;
+            if (string.IsNullOrEmpty(obj.Date))
+            {
+                error = "missing date";
+                return false;
+            }
+            int number = 0;
+            if (!Int32.TryParse(obj.Date, out number))
+            {
+                Console.WriteLine("Number parsed: ", number);
+                error = "illegal date";
+                return false;
+            }
+            
+            return true;
+        }
+
+        public static bool hasBody(Request obj, out string bodyError)
+        {
+            var method = obj.Method;
+            var error = string.Empty;
+            var body = obj.Body;
+            Console.WriteLine("Body is in method: ", body);
+            if(!method.Equals("delete") && !method.Equals("read") && isValidMethodName(obj, out error))
+            {
+                if (string.IsNullOrEmpty(body))
+                {
+                    bodyError = "missing body";
+                    return false;
+                }
+            }
+            if (method.Equals("update"))
+            {
+                Console.WriteLine("Body in illegal test: ", body);
+            }
+            Console.WriteLine("Body in illegal tes: ", obj.ToString());
+            bodyError = string.Empty;
+            return true;
+        }
+
     }
     public static class Util
     {
