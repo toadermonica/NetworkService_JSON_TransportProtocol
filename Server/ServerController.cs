@@ -26,7 +26,7 @@ namespace Server
 
         public void HandleOpperation(TcpClient clientInstance)
         {
-            NetworkStream stream = clientInstance.GetStream();
+            stream = clientInstance.GetStream();
             byte[] buffer = new byte[clientInstance.ReceiveBufferSize];
             var length = buffer.Length;
             var rcnt = stream.Read(buffer, 0, length);
