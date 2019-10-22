@@ -44,7 +44,8 @@ namespace Server
             {
                 var body = request.Body;
                 response = service.Echo(body);
-                string jsonServerResponse = JsonSerializer.Serialize(response, new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
+                //string jsonServerResponse = JsonSerializer.Serialize(response, new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
+                var jsonServerResponse = JsonSerializer.Serialize(request);
                 var msg = Encoding.UTF8.GetBytes(jsonServerResponse);
                 stream.Write(msg, 0, msg.Length);                           
                 stream.Close();
