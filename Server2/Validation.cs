@@ -5,19 +5,40 @@ namespace Server
 {
     public static class Validation
     {
+
+        public static bool isValidClientRequest(Request obj, out string error)
+        {
+            error = string.Empty;
+            var finalError = string.Empty;
+            // the ? : conditional operator "if isValidMethod then return string.empty else return the out parameter of the function"
+            finalError += Validation.isValidMethodName(obj, out string methodError) ? string.Empty : methodError;
+            finalError += Validation.isValidPath(obj, out string pathError) ? string.Empty : pathError;
+            finalError += Validation.isValidDate(obj, out string dateError) ? string.Empty : dateError;
+            finalError += Validation.hasBody(obj, out string bodyError) ? string.Empty : bodyError;
+            if (string.IsNullOrEmpty(finalError))
+            {
+                //request parsed through this mother function is valid (so far)
+                //also return the cumulated error stings in the error out parameter
+                error += finalError;
+                return true;
+            }
+            //the finalError parameter is not an empty string -> add it to out param error and then return false;
+            error += finalError;
+            return false;
+        }
         public static bool isValidMethodName(Request obj, out string error)
         {
             error = string.Empty;
             if (string.IsNullOrEmpty(obj.Method))
             {
                 Console.WriteLine("Missing method");
-                error = "missing method";
+                error = " missing method ";
                 return false;
             }
             if(!obj.Method.Equals("create") && !obj.Method.Equals("delete") && !obj.Method.Equals("read") && !obj.Method.Equals("update") && !obj.Method.Equals("echo"))
             {
                 Console.WriteLine("Inside validator, illegal method");
-                error = "illegal method";
+                error = " illegal method ";
                 return false;
             }
             return true;
@@ -27,7 +48,7 @@ namespace Server
             error = string.Empty;
             if (string.IsNullOrEmpty(obj.Path))
             {
-                error = "missing resource";
+                error = " missing resource ";
                 return false;
             }
             return true;
@@ -37,14 +58,14 @@ namespace Server
             error = string.Empty;
             if (string.IsNullOrEmpty(obj.Date))
             {
-                error = "missing date";
+                error = " missing date ";
                 return false;
             }
             int number = 0;
             if (!Int32.TryParse(obj.Date, out number))
             {
                 Console.WriteLine("Number parsed: ", number);
-                error = "illegal date";
+                error = " illegal date ";
                 return false;
             }
             
@@ -60,7 +81,7 @@ namespace Server
             {
                 if (string.IsNullOrEmpty(body))
                 {
-                    bodyError = "missing body";
+                    bodyError = " missing body ";
                     return false;
                 }
             }
@@ -74,7 +95,7 @@ namespace Server
                 }
                 catch(Exception e){
                     Console.WriteLine("In the exception");
-                    bodyError = "illegal body";
+                    bodyError = " illegal body ";
                     return false;
                 }
             }
