@@ -28,9 +28,12 @@ namespace Client
                 var stream = client.GetStream();
                 Console.WriteLine("Send message:");
                 var msg = Console.ReadLine();
-                var buffer = Encoding.UTF8.GetBytes(msg);
+                var request = new Request {Method = "echo", Body = msg};
+                var json = JsonSerializer.Serialize(request);
+                var buffer = Encoding.UTF8.GetBytes(json);
                 stream.Write(buffer, 0, buffer.Length);
 
+                
                 if (msg == "exit") break;
 
                 var response = client.ReadResponse();
