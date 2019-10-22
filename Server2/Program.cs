@@ -108,38 +108,23 @@ namespace Server
             Response response = new Response();
 
             var buffer = new byte[client.ReceiveBufferSize];
-            int receiveBufferCount;
             try
             {
-                // while ((receiveBufferCount = stream.Read(buffer, 0, buffer.Length)) != 0)
-                // {
-                // var msg = Encoding.UTF8.GetString(buffer, 0, buffer.Length);
-                // Console.WriteLine(msg);
                 var request = client.ReadRequest();
-                if (!Validation.isValidMethodName(request))
+                if (!Validation.isValidMethodName(request, out string error))
                 {
-                    response.Status = "missing method";
+                    response.Status = error;
                 }
+
                 Console.WriteLine(request.ToString());
                 Console.WriteLine("Response Status: ", response.Status);
                 Console.WriteLine("Response Body: ", response.Status);
-                // Console.WriteLine(response.Status);
-                // foreach (var item in Program.categories)
-                // {
-                //  Console.WriteLine(item);   
-                // }
-
-                // implement some kind of cleanup if client sends close message(server sid)
-                // if (msg == "exit2") client.Close();
-                // Console.WriteLine("{1}: Received: {0}", msg, Thread.CurrentThread.ManagedThreadId);
-
-                // var serializeObject = new DataContractJsonSerializer(typeof(Response));
 
                 var serializedObj = JsonSerializer.Serialize<Response>(response, new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
                 var byteReplyMsg = Encoding.UTF8.GetBytes(serializedObj);
                 stream.Write(byteReplyMsg, 0, byteReplyMsg.Length);
                 Console.WriteLine("{1}: Sent: {0}", response, Thread.CurrentThread.ManagedThreadId);
-                // }
+                
             }
             catch (Exception e)
             {
@@ -151,15 +136,22 @@ namespace Server
 
     public static class Validation
     {
-        public static bool isValidMethodName(Request obj)
+        public static bool isValidMethodName(Request obj, out string error)
         {
+            error = string.Empty;
             if (string.IsNullOrEmpty(obj.Method))
             {
                 Console.WriteLine("Missing method");
+                error = "missing method";
+                return false;
+            }
+            if(!obj.Method.Equals("create") && !obj.Method.Equals("delete") && !obj.Method.Equals("read") && !obj.Method.Equals("update") && !obj.Method.Equals("echo"))
+            {
+                Console.WriteLine("Inside validator, illegal method");
+                error = "illegal method";
                 return false;
             }
             return true;
-
         }
     }
     public static class Util
@@ -167,8 +159,6 @@ namespace Server
         public static Response ReadResponse(this TcpClient client)
         {
             var strm = client.GetStream();
-            // Console.WriteLine(strm);
-            //strm.ReadTimeout = 250;
             byte[] resp = new byte[2048];
             using (var memStream = new MemoryStream())
             {
@@ -176,10 +166,6 @@ namespace Server
                 do
                 {
                     bytesread = strm.Read(resp, 0, resp.Length);
-                    // Console.WriteLine(bytesread);
-                    // Console.WriteLine("@@@@@@@");
-                    // Console.WriteLine(bytesread);
-                    // Console.WriteLine("######");
                     memStream.Write(resp, 0, bytesread);
                     var responseData2 = Encoding.UTF8.GetString(memStream.ToArray());
                 } while (bytesread == 2048);
@@ -199,10 +185,6 @@ namespace Server
                 do
                 {
                     bytesread = strm.Read(resp, 0, resp.Length);
-                    // Console.WriteLine(bytesread);
-                    // Console.WriteLine("@@@@@@@");
-                    // Console.WriteLine(bytesread);
-                    // Console.WriteLine("######");
                     memStream.Write(resp, 0, bytesread);
                     var responseData2 = Encoding.UTF8.GetString(memStream.ToArray());
                 } while (bytesread == 2048);
