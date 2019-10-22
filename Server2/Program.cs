@@ -111,6 +111,7 @@ namespace Server
             try
             {
                 var request = client.ReadRequest();
+                Console.WriteLine("Illegal json body? ", request);
                 if (!Validation.isValidMethodName(request, out string methodError))
                 {
                     response.Status = methodError;
@@ -123,7 +124,8 @@ namespace Server
                 {
                     response.Status = dateError;
                 }
-                if(!Validation.hasBody(request, out string bodyError))
+                Console.WriteLine("Before entering:{0} ",request);
+                if (!Validation.hasBody(request, out string bodyError))
                 {
                     Console.WriteLine("HasBody is now : ", bodyError);
                     response.Status = bodyError;
@@ -200,7 +202,6 @@ namespace Server
             var method = obj.Method;
             var error = string.Empty;
             var body = obj.Body;
-            Console.WriteLine("Body is in method: ", body);
             if(!method.Equals("delete") && !method.Equals("read") && isValidMethodName(obj, out error))
             {
                 if (string.IsNullOrEmpty(body))
@@ -211,9 +212,18 @@ namespace Server
             }
             if (method.Equals("update"))
             {
-                Console.WriteLine("Body in illegal test: ", body);
+                try
+                {
+                    Console.WriteLine("In has body try ");
+                    var canDeserialize = JsonSerializer.Deserialize<Category>(obj.Body, new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
+                    Console.WriteLine(canDeserialize);
+                }
+                catch(Exception e){
+                    Console.WriteLine("In the exception");
+                    bodyError = "illegal body";
+                    return false;
+                }
             }
-            Console.WriteLine("Body in illegal tes: ", obj.ToString());
             bodyError = string.Empty;
             return true;
         }
@@ -255,6 +265,11 @@ namespace Server
                 } while (bytesread == 2048);
 
                 var requestData = Encoding.UTF8.GetString(memStream.ToArray());
+                Console.WriteLine("1234525242424422  ");
+
+                
+                var test = JsonSerializer.Deserialize<Request>(requestData, new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
+                Console.WriteLine(test);
                 return JsonSerializer.Deserialize<Request>(requestData, new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
             }
         }
