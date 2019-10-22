@@ -66,7 +66,6 @@ namespace Server
                 } while (bytesread == 2048);
 
                 var requestData = Encoding.UTF8.GetString(memStream.ToArray());
-                Console.WriteLine("1234525242424422  ");
 
                 
                 var test = JsonSerializer.Deserialize<Request>(requestData, new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase });

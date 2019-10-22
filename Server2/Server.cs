@@ -50,30 +50,19 @@ namespace Server
             {
                 var request = client.ReadRequest();
                 Console.WriteLine("Illegal json body? ", request);
-                if (!Validation.isValidMethodName(request, out string methodError))
+
+                //pass request to mother validation function from validation class
+                if (!Validation.isValidClientRequest(request, out string error))
                 {
-                    response.Status = methodError;
-                }
-                if(!Validation.isValidPath(request, out string pathError))
-                {
-                    response.Status = pathError;
-                }
-                if(!Validation.isValidDate(request, out string dateError))
-                {
-                    response.Status = dateError;
-                }
-                Console.WriteLine("Before entering:{0} ",request);
-                if (!Validation.hasBody(request, out string bodyError))
-                {
-                    Console.WriteLine("HasBody is now : ", bodyError);
-                    response.Status = bodyError;
+                    response.Status = error;
                 }
 
-                Console.WriteLine("In hereee!!! main: ",request.ToString());
-                Console.WriteLine("Response Status: ", response.Status);
-                Console.WriteLine("Response Body: ", response.Status);
+                Console.WriteLine("In hereee!!! main: {0}",request.ToString());
+                Console.WriteLine("Response Status to be sent: {0}", response.Status);
+                Console.WriteLine("Response Body: {0}", response.Body);
 
                 var serializedObj = JsonSerializer.Serialize<Response>(response, new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
+                Console.WriteLine("serializedObj before write to stream: {0}", serializedObj);
                 var byteReplyMsg = Encoding.UTF8.GetBytes(serializedObj);
                 stream.Write(byteReplyMsg, 0, byteReplyMsg.Length);
                 Console.WriteLine("{1}: Sent: {0}", response, Thread.CurrentThread.ManagedThreadId);
