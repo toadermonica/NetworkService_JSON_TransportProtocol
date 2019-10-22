@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Server2;
+using System;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
@@ -27,7 +28,7 @@ namespace Server
                     var client = server.AcceptTcpClient();
 
                     Console.WriteLine($"A client connected!");
-                    Thread t = new Thread(new ParameterizedThreadStart(HandleDevice));
+                    Thread t = new Thread(new ParameterizedThreadStart(ClientInstance));
                     t.Start(client);
 
                 }
@@ -39,7 +40,7 @@ namespace Server
             }
         }
 
-        public void HandleDevice(object obj)
+        public void ClientInstance(object obj)
         {
             TcpClient client = (TcpClient)obj;
             var stream = client.GetStream();
