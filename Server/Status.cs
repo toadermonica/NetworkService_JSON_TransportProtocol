@@ -9,7 +9,7 @@ namespace Server
         public int code { get; set; }
         public string statusBody { get; set; }
 
-        public string SetStatusBody(int code)
+        public static string SetStatusBody(int code)
         {
             return code switch
             {

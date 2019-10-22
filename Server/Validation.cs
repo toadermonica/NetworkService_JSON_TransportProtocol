@@ -55,8 +55,26 @@ namespace Server
                 error = " missing resource ";
                 return false;
             }
-            /*if(path.Contains("/api/") && )*/
-            
+            if (path.Equals("testing"))
+            {
+                error = string.Empty;
+                return true;
+            }
+            string[] pathValues = Regex.Split(path, @"\/");
+            Console.WriteLine("PathValue 0 is: {0}", pathValues[0]);
+            Console.WriteLine("PathValue 1 is: {0}", pathValues[1]);
+            Console.WriteLine("PathValue 2 is: {0}", pathValues[2]);
+            if (pathValues[1].Equals("api"))
+            {
+                var result = GetMethodName(pathValues[2]);
+                if (result.Equals("invalid"))
+                {
+                    error = "4 ";
+                    error += Status.SetStatusBody(4);
+                    return false;
+                }
+
+            }
             return true;
         }
         public static bool isValidDate(Request obj, out string error)
@@ -139,6 +157,27 @@ namespace Server
             return false;
         }
 
-        
+        public static string GetMethodName(string name)
+        {
+            switch (name)
+            {
+                case "echo":
+                    return "echo";
+                case "create":
+                    return "create";
+                case "read":
+                    return "read";
+                case "update":
+                    return "update";
+                case "delete":
+                    return "delete";
+                default:
+                    return "invalid";
+            }
+
+        }
+       
+
+
     }
 }
