@@ -51,6 +51,14 @@ namespace Server
                 error = " missing resource ";
                 return false;
             }
+<<<<<<< Updated upstream
+=======
+            if (path.Equals("/api/"))
+            {
+              
+            }
+            
+>>>>>>> Stashed changes
             return true;
         }
         public static bool isValidDate(Request obj, out string error)
@@ -103,5 +111,44 @@ namespace Server
             return true;
         }
 
+<<<<<<< Updated upstream
+=======
+        public static bool isSpecialEcho(Request obj, out string specialReturn)
+        {
+
+            if (string.IsNullOrEmpty(obj.Method))
+            {
+                specialReturn = null;
+                return false;
+            }
+            if (obj.Method.Equals("echo") && !string.IsNullOrEmpty(obj.Body))
+            {
+                specialReturn = obj.Body;
+                return true;
+            }
+            specialReturn = null;
+            return false;
+        }
+
+        public static string GetMethodName(string name)
+        {
+            switch (name){
+                case "echo":
+                    return "echo";
+                case "create":
+                    return "create";
+                case "read":
+                    return "read";
+                case "update":
+                    return "update";
+                case "delete":
+                    return "delete";
+                default:
+                    return "invalid";
+            }
+                
+        }
+
+>>>>>>> Stashed changes
     }
 }
