@@ -1,4 +1,5 @@
-﻿using System.Text.Json.Serialization;
+﻿using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 namespace Server
 {
@@ -12,5 +13,10 @@ namespace Server
         {
             return "Id: " + Id + ", Name: " + Name;
         }
+        public static List<Category> categories = new List<Category>{
+                new Category {Id = 1, Name = "Beverages"},
+                new Category {Id = 2, Name = "Condiments"},
+                new Category {Id = 3, Name = "Confections"}
+        };
     }
 }
