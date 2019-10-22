@@ -37,14 +37,13 @@ namespace Server
         public void ServerResponse(string receivedMessage)
         {
             var value = receivedMessage;
-            Request request = JsonSerializer.Deserialize<Request>(receivedMessage, new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
+            Request request = JsonSerializer.Deserialize<Request>(receivedMessage);
             Service service = new Service(request);
             Response response;
             if (request.Method.Equals("echo"))
             {
                 var body = request.Body;
                 response = service.Echo(body);
-                //string jsonServerResponse = JsonSerializer.Serialize(response, new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
                 var jsonServerResponse = JsonSerializer.Serialize(request);
                 var msg = Encoding.UTF8.GetBytes(jsonServerResponse);
                 stream.Write(msg, 0, msg.Length);                           
