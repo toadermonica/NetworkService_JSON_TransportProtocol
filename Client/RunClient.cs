@@ -31,7 +31,7 @@ namespace Client
                 client.Connect(IPAddress.Loopback, Port);
 
                 var stream = client.GetStream();
-               // Console.WriteLine("Send message:");
+                //Console.WriteLine("Send message:");
                 //var msg = Console.ReadLine();
                 
                 var req = JsonSerializer.Serialize(request, new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase });

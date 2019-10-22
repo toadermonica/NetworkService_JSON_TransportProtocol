@@ -16,6 +16,7 @@ namespace Server
                 byte[] buffer = new byte[2048];
                 string receivedMessage = string.Empty;
                 var isDataOnStream = stream.DataAvailable;
+                Console.WriteLine("isDataOnStream", isDataOnStream);
                 if (isDataOnStream)
                 {
                     var rcnt = stream.Read(buffer, 0, buffer.Length);
@@ -27,14 +28,19 @@ namespace Server
                         {
                             Console.WriteLine(receivedMessage);
                             var request = JsonSerializer.Deserialize<Request>(receivedMessage, new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
+                            Console.WriteLine("Request ", request);
                             //call to see what method that deals with thre reponse;
                             //var responseToSend = GetMethodResponse(request, "invalid method");
                             var resp = isValidMethod(request);
-                            Console.WriteLine("Echo? {0}", resp);
+                            string error = string.Empty;
+                            if (!string.IsNullOrEmpty(resp))
+                            {
+                                error = resp;
+                            }
                             //string jsonServerResponse = JsonSerializer.Serialize(responseToSend, new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
-                            var msg = Encoding.UTF8.GetBytes(resp);
+                            var msg = Encoding.UTF8.GetBytes(error);
                             //var msg = Encoding.UTF8.GetBytes(jsonServerResponse);
-                            Console.WriteLine(resp);
+                            Console.WriteLine(error);
                             stream.Write(msg, 0, msg.Length);
                             stream.Close();
                         }else{
@@ -44,6 +50,7 @@ namespace Server
                     catch (Exception e)
                     {
                         Console.WriteLine("Faulty request, cannot deserialize");
+
                         // TODO: if no valid request then return invalid request. 
                     }
                 }
@@ -84,7 +91,7 @@ namespace Server
         {
             var method = request.Method;
            if(!method.Equals("create") && !method.Equals("read") && !method.Equals("update") && !method.Equals("delete") && !method.Equals("echo")){
-                return string.Empty;
+                return "illegal method";
            }
             return string.Empty;
         }

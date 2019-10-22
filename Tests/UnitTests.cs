@@ -71,7 +71,7 @@ namespace Tests
 
             client.SendRequest(request.ToJson());
             var response = client.ReadResponse();
-
+            Console.WriteLine("Response is: ", response);
             Assert.Contains("illegal method", response.Status.ToLower());
         }
 
