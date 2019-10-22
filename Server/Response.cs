@@ -2,7 +2,7 @@
 {
     public class Response
     {
-        public Status status { get; set; }
-        public string body { get; set; }
+        public string Status { get; set; }
+        public string Body { get; set; }
     }
 }
