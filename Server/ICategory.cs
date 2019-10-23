@@ -8,9 +8,9 @@ namespace Server2
 
         void update(int index, string name);
 
-        Category GetCategory(string name);
+        int GetCategoryId(string name);
         
-        Category GetCategory(int index);
+        int GetCategoryId(int index);
         
         bool delete(string name);
 
