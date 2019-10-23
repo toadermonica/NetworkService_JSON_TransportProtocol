@@ -33,7 +33,6 @@ namespace Server
                     Console.WriteLine($"A client connected!");
                     Thread t = new Thread(new ParameterizedThreadStart(ClientInstance));
                     t.Start(client);
-
                 }
             }
             catch (SocketException e)
@@ -52,7 +51,6 @@ namespace Server
             try
             {
                 var request = client.ReadRequest();
-                Console.WriteLine("Illegal json body? ", request);
                 Console.WriteLine("Incoming: {0}", request.ToString());
 
                 response = Validation.isValidClientRequest(request, Server.catman);
@@ -100,7 +98,6 @@ namespace Server
                         {
                             response.Body = Server.catman.GetCategories().ToJson();
                         }
-
                         response.StatusNumber = 1;
                         response.Status = "Ok";
                     }
@@ -124,11 +121,15 @@ namespace Server
                 Console.WriteLine("Response Status to be sent: {0}", response.Status);
                 Console.WriteLine("Response Body: {0}", response.Body);
 
-                var serializedObj = JsonSerializer.Serialize<Response>(response, new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
-                Console.WriteLine("serializedObj before write to stream: {0}", serializedObj);
-                var byteReplyMsg = Encoding.UTF8.GetBytes(serializedObj);
-                stream.Write(byteReplyMsg, 0, byteReplyMsg.Length);
-                Console.WriteLine("{1}: Sent: {0}", response, Thread.CurrentThread.ManagedThreadId);
+                try
+                {
+                    var serializedObj = JsonSerializer.Serialize<Response>(response, new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
+                    Console.WriteLine("serializedObj before write to stream: {0}", serializedObj);
+                    var byteReplyMsg = Encoding.UTF8.GetBytes(serializedObj);
+                    stream.Write(byteReplyMsg, 0, byteReplyMsg.Length);
+                    Console.WriteLine("{1}: Sent: {0}", response, Thread.CurrentThread.ManagedThreadId);
+                }
+                catch (Exception) { Console.WriteLine("Connection lost!"); }
                 client.Close();
             }
             catch (Exception e)

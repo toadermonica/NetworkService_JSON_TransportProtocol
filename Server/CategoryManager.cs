@@ -33,7 +33,6 @@ namespace Server2
         public int GetCategoryId(string name)
         {
             Console.WriteLine("getcat");
-            // return GetCategory(find(name));
             return find(name);
 
         }
@@ -41,15 +40,13 @@ namespace Server2
         public List<Category> GetCategories()
         {
             Console.WriteLine("getcats");
-            // return GetCategory(find(name));
-            return categories;
+             return categories;
 
         }
 
         public Category GetCategory(int index)
         {
             Console.WriteLine("getcats");
-            // return GetCategory(find(name));
             return categories[index-1];
 
         }
@@ -63,10 +60,8 @@ namespace Server2
         {
             foreach (var category in categories)
             {
-                Console.WriteLine("getfind1");
                 if (category.Id.Equals(index))
                 {
-                    Console.WriteLine("getfind2");
                     return category.Id;
                 }
             }

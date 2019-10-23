@@ -15,7 +15,6 @@ namespace Server
             var temperror = string.Empty;
             int tempstatusnum = 666;
   
-            
             builtresponse = isValidMethodName(obj);
             tempstatusnum = builtresponse.StatusNumber;
             temperror = builtresponse.Status;
@@ -67,8 +66,6 @@ namespace Server
                 return builtresponse;
             }
 
-
-
             return builtresponse;
         }
         public static Response isValidPath(Request obj, CategoryManager catman)
@@ -90,18 +87,13 @@ namespace Server
                 Console.WriteLine("PathValue {1} is: {0}", s, i+1);
                 i++;
             }
-
             if (i > 0)
             {
-
                 if (pathValues[1].Equals("api"))
                 {
-                    Console.WriteLine("apppi");
-
                     if (i > 1)
                     {
                         if (pathValues[2].Equals("categories"))
-                            
                         {
                             Console.WriteLine(pathValues[2]);
                             if (i > 2)
@@ -116,7 +108,6 @@ namespace Server
                                         builtresponse.StatusNumber = 4;
                                         return builtresponse;
                                     }
-     
                                     else if (obj.Method.Equals("delete") || obj.Method.Equals("read") || obj.Method.Equals("update"))
                                     {
                                         try { Int32.Parse(pathValues[3]); }
@@ -126,23 +117,19 @@ namespace Server
                                             builtresponse.StatusNumber = 4;
                                             return builtresponse;
                                         }
-                                        //CategoryManager catman = new CategoryManager();
-                                        // Console.WriteLine("pathid " + pathValues[2]);
                                         int cat = catman.GetCategoryId(Int32.Parse(pathValues[3]));
                                         if (cat == -1)
                                         {
-                                            foreach (Category catty in catman.GetCategories())
-                                            { Console.WriteLine(cat); }
-                                            Console.WriteLine("no cats");
+                                            //foreach (Category catty in catman.GetCategories())
+                                            //{ Console.WriteLine(catty); }
+                                            Console.WriteLine("no cats found!");
                                             builtresponse.Status = "not found";
                                             builtresponse.StatusNumber = 5;
                                             return builtresponse;
                                         }
-                                        else { Console.WriteLine("found"); builtresponse.StatusNumber = 1; return builtresponse; }
+                                        else { Console.WriteLine("cats found!"); builtresponse.StatusNumber = 1; return builtresponse; }
                                         }
-
                                 }
-                                
                             }
                             else if (obj.Method.Equals("delete") || obj.Method.Equals("update"))
                             {
@@ -171,7 +158,7 @@ namespace Server
             }
             else
             {
-                builtresponse.Status = "crap";
+                builtresponse.Status = "really bad request";
                 builtresponse.StatusNumber = 4;
                 return builtresponse;
             }
@@ -189,12 +176,11 @@ namespace Server
             int number = 0;
             if (!Int32.TryParse(obj.Date, out number))
             {
-                Console.WriteLine("Number parsed: ", number);
+                Console.WriteLine("Date parsed: ", number);
                 builtresponse.Status = " illegal date ";
                 builtresponse.StatusNumber = 4;
                 return builtresponse;
             }
-
             return builtresponse;
         }
 
@@ -208,7 +194,6 @@ namespace Server
                 builtresponse.StatusNumber = 4;
                 return builtresponse;
             }
-
                 if(method.Equals("create") || method.Equals("echo") || method.Equals("update"))
                 {
                     if (string.IsNullOrEmpty(body))
@@ -218,25 +203,23 @@ namespace Server
                     return builtresponse;
                 }
                 }
-
-
                 if (method.Equals("update"))
                 {
                     try
                     {
-                        Console.WriteLine("In has body try ");
+                        //Console.WriteLine("In has body try ");
                         var canDeserialize = JsonSerializer.Deserialize<Category>(obj.Body, new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
-                        Console.WriteLine(canDeserialize);
-                    }
+                        //Console.WriteLine(canDeserialize);
+                         Console.WriteLine("can update; legal body");
+                }
                     catch (Exception e)
                     {
-                        Console.WriteLine("In the exception");
+                        Console.WriteLine("cannot update; illegal body");
                     builtresponse.Status = " illegal body ";
                     builtresponse.StatusNumber = 4;
                     return builtresponse;
                 }
                 }
-
                 return builtresponse;
         }
 
@@ -280,3 +263,4 @@ namespace Server
 
     }
 }
+

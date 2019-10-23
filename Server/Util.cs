@@ -37,17 +37,24 @@ namespace Server2
                 int bytesread = 0;
                 do
                 {
-                    bytesread = strm.Read(resp, 0, resp.Length);
-                    memStream.Write(resp, 0, bytesread);
-                    var responseData2 = Encoding.UTF8.GetString(memStream.ToArray());
+                    try
+                    {
+                        bytesread = strm.Read(resp, 0, resp.Length);
+                        memStream.Write(resp, 0, bytesread);
+                        var responseData2 = Encoding.UTF8.GetString(memStream.ToArray());
+                    }
+                    catch (Exception) { Console.WriteLine("Stream Read Exception"); }
                 } while (bytesread == 2048);
 
                 var requestData = Encoding.UTF8.GetString(memStream.ToArray());
 
-
-                var test = JsonSerializer.Deserialize<Request>(requestData, new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
-                Console.WriteLine(test);
-                return JsonSerializer.Deserialize<Request>(requestData, new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
+                try
+                {
+                    var test = JsonSerializer.Deserialize<Request>(requestData, new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
+                    Console.WriteLine(test);
+                    return JsonSerializer.Deserialize<Request>(requestData, new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
+                }
+                catch (Exception) { Request nullreq = new Request(); return nullreq; }
             }
         }
 
