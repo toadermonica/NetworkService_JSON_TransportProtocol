@@ -7,35 +7,35 @@ namespace Server2
     /**
      * The purpose of this class is to provide storage and management of the different categories.
      */
-    public static class CategoryManager
+    public class CategoryManager : ICategory
     {
-        private static int i;
-        public static List<Category> categories = new List<Category>();
+        private int i;
+        public List<Category> categories = new List<Category>();
 
-        static CategoryManager()
+        public CategoryManager()
         {
             add("Beverages");
             add("Condiments");
             add("Confections");
         }
 
-        public static void add(string name)
+        public void add(string name)
         {
             i++;
             categories.Add(new Category {Id = i, Name = name});
         }
 
-        public static Category GetCategory(string name)
+        public Category GetCategory(string name)
         {
             return GetCategory(find(name));
         }
         
-        public static Category GetCategory(int index)
+        public Category GetCategory(int index)
         {
             return categories[index];
         }
 
-        public static bool delete(string name)
+        public bool delete(string name)
         {
             int indexOfElement = find(name);
             if (indexOfElement == -1)    //-1 indicates that the element is not in the categories.
@@ -46,7 +46,7 @@ namespace Server2
             return true;
         }
         
-        private static int find(string name)
+        private int find(string name)
         {
             foreach (var category in categories)
             {
