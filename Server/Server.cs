@@ -64,7 +64,7 @@ namespace Server
 
                 
 
-                Console.WriteLine("In hereee!!! main: {0}",request.ToString());
+                Console.WriteLine("Incoming: {0}",request.ToString());
                 Console.WriteLine("Response Status to be sent: {0}", response.Status);
                 Console.WriteLine("Response Body: {0}", response.Body);
 
@@ -77,7 +77,8 @@ namespace Server
             }
             catch (Exception e)
             {
-                Console.WriteLine("Exception: {0}", e.ToString());
+                //Console.WriteLine("Exception: {0}", e.ToString());
+                Console.WriteLine("Exception"); 
                 client.Close();
             }
         }
