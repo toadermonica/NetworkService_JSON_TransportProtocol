@@ -45,40 +45,17 @@ namespace Server
 
         public void ClientInstance(object obj)
         {
-            //CategoryManager catman = new CategoryManager();
-            //catman = Server.catman;
-            //CategoryManager catman = new CategoryManager();
             TcpClient client = (TcpClient)obj;
             var stream = client.GetStream();
             Response response = new Response();
-            //int statusnumber = 777;
             var buffer = new byte[client.ReceiveBufferSize];
             try
             {
                 var request = client.ReadRequest();
                 Console.WriteLine("Illegal json body? ", request);
-
-                //pass request to mother validation function from validation class
-                //if (!Validation.isValidClientRequest(request, out response))
-                // {
-
-                //    statusnumber = 4;
-                //    response.Status += statusnumber.ToString() + " " + error;
-                //   if (!string.IsNullOrEmpty(echoCaseBody))
-                //    {
-                //       response.Body = echoCaseBody;
-                //    }
-                // }
-
                 Console.WriteLine("Incoming: {0}", request.ToString());
 
-
                 response = Validation.isValidClientRequest(request, Server.catman);
-                //if (response.StatusNumber==4) { response.Status = response.StatusNumber.ToString() + " BAD REQUEST " + response.Status; }
-                //else if (response.StatusNumber == 5) { response.Status = response.StatusNumber.ToString() + " NOT FOUND " + response.Status; }
-                //else 
-                //foreach (Category cat in Server.catman.GetCategories())
-                //{ Console.WriteLine(cat); }
 
                 if (response.StatusNumber == 1) { response.Body = response.EchoBody; }
                 else if (response.StatusNumber == 4 || response.StatusNumber == 5) {
@@ -86,7 +63,6 @@ namespace Server
                 else
                 {
                     if (request.Method.Equals("create")) {
-                        //CategoryManager catman = new CategoryManager();
                         var test = JsonSerializer.Deserialize<Category>(request.Body);
                         Console.WriteLine(test);
                         Server.catman.add(test.Name);
@@ -97,7 +73,6 @@ namespace Server
 
                     }
                     if (request.Method.Equals("delete")) {
-                        //CategoryManager catman = new CategoryManager();
                         string[] pathValues = Regex.Split(request.Path, @"\/");
                         Console.WriteLine("delok " + pathValues[3]);
 
@@ -159,7 +134,6 @@ namespace Server
             catch (Exception e)
             {
                 Console.WriteLine("Exception: {0}", e.ToString());
-                //Console.WriteLine("Exception"); 
                 client.Close();
             }
         }

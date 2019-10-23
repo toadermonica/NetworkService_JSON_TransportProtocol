@@ -10,22 +10,11 @@ namespace Server
 
         public static Response isValidClientRequest(Request obj, CategoryManager catman)
         {
-            //errorstring = string.Empty;
-            //specialBody = null;
-
-           // foreach (Category cat in catman.GetCategories())
-           // { Console.WriteLine(cat); }
-           // Console.WriteLine("validcats");
 
             Response builtresponse = new Response();
             var temperror = string.Empty;
             int tempstatusnum = 666;
-            // the ? : conditional operator "if isValidMethod then return string.empty else return the out parameter of the function"
-            //finalError += Validation.isValidMethodName(obj, out string methodError) ? string.Empty : methodError; 
-            //finalError += Validation.isValidPath(obj, out string pathError, out int status) ? string.Empty : pathError;
-            //finalError += Validation.isValidDate(obj, out string dateError) ? string.Empty : dateError;
-            //finalError += Validation.hasBody(obj, out string bodyError) ? string.Empty : bodyError;
-            //specialBody += Validation.isSpecialEcho(obj, out string specialReturn) ? specialReturn : null;
+  
             
             builtresponse = isValidMethodName(obj);
             tempstatusnum = builtresponse.StatusNumber;
@@ -47,23 +36,10 @@ namespace Server
 
             builtresponse = isSpecialEcho(obj);
             if (builtresponse.EchoBody != null) { tempstatusnum = builtresponse.StatusNumber; }
-
-
-                //if () { }
-                builtresponse.StatusNumber = tempstatusnum;
+            builtresponse.StatusNumber = tempstatusnum;
             builtresponse.Status = temperror;
 
             Console.WriteLine(builtresponse.StatusNumber + " " + builtresponse.Status);
-            //if (string.IsNullOrEmpty(temperror))
-            //{
-                //request parsed through this mother function is valid (so far)
-                //also return the cumulated error stings in the error out parameter
-                //errorstring += finalError;
-              //  return builtresponse;
-              //}
-            //the finalError parameter is not an empty string -> add it to out param error and then return false;
-
-            //errorstring = finalError;
             return builtresponse;
         }
         public static Response isValidMethodName(Request obj)
@@ -75,7 +51,6 @@ namespace Server
             {
                 builtresponse.Status = " missing resource ";
                 builtresponse.StatusNumber = 4;
-                //return builtresponse;
             }
             if (string.IsNullOrEmpty(obj.Method))
             {
@@ -107,10 +82,6 @@ namespace Server
                 builtresponse.StatusNumber = 4;
                 return builtresponse;
             }
-            //if (path.Equals("testing"))
-            //{
-            //    return builtresponse;
-            //}
             string[] pathValues = Regex.Split(path, @"\/");
             int i=-1;
 
@@ -141,24 +112,11 @@ namespace Server
                                     Console.WriteLine(pathValues[3]);
                                     if (obj.Method.Equals("create"))
                                     {
-                                        //Console.WriteLine("Missing method");
                                         builtresponse.Status = "bad request";
                                         builtresponse.StatusNumber = 4;
                                         return builtresponse;
                                     }
-                                   // else if (obj.Method.Equals("read"))
-                                   // {
-
-
-                                        //CategoryManager catman = new CategoryManager();
-                                     ///   int cat = catman.GetCategory(Int32.Parse(pathValues[3]));
-                                     //   if (cat == -1)
-                                   // {
-                                  //      builtresponse.Status = "bad request";
-                                   //     builtresponse.StatusNumber = 4;
-                                  //      return builtresponse;
-                                  //  }
-                                  //  }
+     
                                     else if (obj.Method.Equals("delete") || obj.Method.Equals("read") || obj.Method.Equals("update"))
                                     {
                                         try { Int32.Parse(pathValues[3]); }
@@ -183,7 +141,6 @@ namespace Server
                                         else { Console.WriteLine("found"); builtresponse.StatusNumber = 1; return builtresponse; }
                                         }
 
-                                    // Console.WriteLine(cat);
                                 }
                                 
                             }
@@ -209,13 +166,6 @@ namespace Server
                         builtresponse.Status = "bad request";
                         builtresponse.StatusNumber = 4;
                         return builtresponse;
-                        //var result = GetMethodName(pathValues[2]);
-                        // if (result.Equals("invalid"))
-                        // {
-                        //     error = Status.SetStatusBody(4);
-                        //     return false;
-                        // }
-
                     }
                 }
             }
@@ -258,8 +208,7 @@ namespace Server
                 builtresponse.StatusNumber = 4;
                 return builtresponse;
             }
-            //if(!method.Equals("delete") && !method.Equals("read"))
-            //{
+
                 if(method.Equals("create") || method.Equals("echo") || method.Equals("update"))
                 {
                     if (string.IsNullOrEmpty(body))
@@ -288,9 +237,7 @@ namespace Server
                 }
                 }
 
-            //}
-
-            return builtresponse;
+                return builtresponse;
         }
 
         public static Response isSpecialEcho(Request obj)
