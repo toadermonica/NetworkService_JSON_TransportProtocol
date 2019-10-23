@@ -25,6 +25,11 @@ namespace Server2
             categories.Add(new Category {Id = i, Name = name});
         }
 
+        public void update(int index, string name)
+        {
+            categories[index].Name = name;
+        }
+        
         public Category GetCategory(string name)
         {
             return GetCategory(find(name));

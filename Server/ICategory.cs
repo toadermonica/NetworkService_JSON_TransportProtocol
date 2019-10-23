@@ -6,6 +6,8 @@ namespace Server2
     {
         void add(string name);
 
+        void update(int index, string name);
+
         Category GetCategory(string name);
         
         Category GetCategory(int index);
